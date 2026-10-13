@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Collins Pharaoh — ICT freelancer and digital creator based in Nairobi, Kenya. Web development, ICT support, data entry, video editing and digital content.">
+  <meta name="theme-color" content="#0a0f0e">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi, Kenya">
+  <meta property="og:title" content="Collins Pharaoh | ICT Freelancer — Nairobi">
+  <meta property="og:description" content="Practical digital services delivered with precision. Web development, ICT support, video editing and more.">
+  <meta property="og:type" content="website">
+  <title>Collins Pharaoh | ICT Freelancer — Nairobi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:       #0a0f0e;
+      --surface:  #111816;
+      --card:     #161d1b;
+      --line:     #1f2b28;
+      --muted:    #6b807a;
+      --body:     #b8ccc7;
+      --heading:  #e8f0ee;
+      --white:    #f0f6f4;
+      --green:    #00c896;
+      --green-dim:#00a87e;
+      --green-bg: rgba(0,200,150,.07);
+      --shadow:   0 24px 60px rgba(0,0,0,.45);
+      --r:        14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.locked { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { font: inherit; cursor: pointer; }
+
+    /* ── SKIP ── */
+    .skip {
+      position: absolute; left: -999px; top: 12px;
+      background: var(--green); color: #000;
+      padding: 8px 16px; border-radius: 6px; z-index: 200;
+      font-weight: 600;
+    }
+    .skip:focus { left: 12px; }
+
+    /* ── LAYOUT ── */
+    .wrap { width: min(1100px, 100% - 2.5rem); margin: auto; }
+
+    /* ── NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,14,.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+      padding: env(safe-area-inset-top, 0) 0 0;
+    }
+    .nav {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+      height: 68px;
+    }
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem; font-weight: 800;
+      color: var(--white); letter-spacing: -.02em;
+    }
+    .brand em { color: var(--green); font-style: normal; }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-links a {
+      font-size: .85rem; font-weight: 500;
+      color: var(--muted); letter-spacing: .01em;
+      transition: color .2s;
+    }
+    .nav-links a:hover, .nav-links a.on { color: var(--white); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem 1.15rem;
+      background: var(--green); color: #000;
+      border-radius: 999px; font-weight: 600; font-size: .85rem;
+      transition: background .2s, transform .2s;
+    }
+    .nav-cta:hover { background: var(--green-dim); transform: translateY(-1px); }
+    .ham {
+      display: none;
+      width: 40px; height: 40px;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--body);
+      font-size: 1.2rem; align-items: center; justify-content: center;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .72rem 1.4rem; border-radius: 999px;
+      font-weight: 600; font-size: .9rem; transition: .2s;
+    }
+    .btn-green {
+      background: var(--green); color: #000;
+    }
+    .btn-green:hover { background: var(--green-dim); transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid var(--line); color: var(--body);
+    }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+
+    /* ── SECTION BASE ── */
+    section { scroll-margin-top: 80px; }
+    .section { padding: 96px 0; }
+    .section-alt { background: var(--surface); border-block: 1px solid var(--line); }
+    .label {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+      color: var(--green); margin-bottom: 1rem;
+    }
+    .label::before {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--green);
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--heading);
+      line-height: 1.05; letter-spacing: -.04em;
+      margin-bottom: .75rem;
+    }
+    h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--white); margin-bottom: .4rem;
+    }
+    .sub {
+      font-size: 1.05rem; color: var(--muted);
+      max-width: 560px; line-height: 1.7;
+    }
+
+    /* ── HERO ── */
+    .hero { padding: 100px 0 110px; position: relative; overflow: hidden; }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 70% 40%, rgba(0,200,150,.06), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 64px; align-items: center;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800; color: var(--white);
+      line-height: 1; letter-spacing: -.05em;
+      margin: .6rem 0 1.25rem;
+    }
+    .hero h1 .accent { color: var(--green); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 480px; line-height: 1.75; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+    .hero-stats {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--green); line-height: 1;
+    }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+
+    /* Hero image panel */
+    .hero-visual {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .hero-visual img {
+      width: 100%; height: 480px; object-fit: cover;
+      filter: saturate(.85) brightness(.9);
+    }
+    .hero-badge {
+      position: absolute; bottom: 18px; left: 18px;
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(10,15,14,.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: .82rem; font-weight: 600; color: var(--white);
+    }
+    .dot {
+      width: 8px; height: 8px;
+      background: var(--green); border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(0,200,150,.2);
+      flex-shrink: 0;
+    }
+    .hero-tag {
+      position: absolute; top: 18px; right: 18px;
+      background: var(--green); color: #000;
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .1em;
+      padding: 6px 12px; border-radius: 999px;
+    }
+
+    /* ── PILLARS ── */
+    .pillars { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); }
+    .pillar {
+      background: var(--surface);
+      padding: 28px 24px;
+    }
+    .pillar-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--green-bg);
+      border: 1px solid rgba(0,200,150,.2);
+      display: grid; place-items: center;
+      font-size: 1rem; margin-bottom: 16px;
+    }
+    .pillar p { font-size: .88rem; color: var(--muted); margin-top: .3rem; }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 72px; align-items: start;
+    }
+    .about-aside {
+      position: sticky; top: 100px;
+    }
+    .about-card {
+      margin-top: 1.5rem;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: var(--card);
+    }
+    .about-card p { font-size: .88rem; color: var(--muted); margin-top: .5rem; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
+    .chip {
+      padding: 5px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: .75rem; color: var(--muted);
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--line);
+    }
+    .svc {
+      background: var(--card);
+      padding: 32px 28px;
+      transition: background .2s;
+    }
+    .svc:hover { background: #1a2421; }
+    .svc-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--green-bg);
+      border: 1px solid rgba(0,200,150,.18);
+      display: grid; place-items: center;
+      font-size: 1.15rem; margin-bottom: 20px;
+    }
+    .svc p { font-size: .88rem; color: var(--muted); margin-top: .4rem; line-height: 1.65; }
+
+    /* ── SKILLS ── */
+    .skills-layout {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 72px; align-items: start;
+    }
+    .skills-list { display: grid; gap: 14px; }
+    .skill-row { }
+    .skill-meta {
+      display: flex; justify-content: space-between;
+      font-size: .85rem; font-weight: 600;
+      color: var(--white); margin-bottom: 8px;
+    }
+    .skill-pct { color: var(--green); }
+    .track {
+      height: 4px; background: var(--line);
+      border-radius: 99px; overflow: hidden;
+    }
+    .fill {
+      height: 100%; background: var(--green);
+      border-radius: 99px; width: 0;
+      transition: width 1.1s cubic-bezier(.4,0,.2,1);
+    }
+    .skills-note {
+      margin-top: 1.5rem;
+      padding: 18px 20px;
+      background: var(--green-bg);
+      border: 1px solid rgba(0,200,150,.15);
+      border-radius: var(--r);
+      font-size: .85rem; color: var(--muted);
+    }
+    .skills-note strong { color: var(--green); display: block; margin-bottom: 4px; }
+
+    /* ── PORTFOLIO ── */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 20px;
+    }
+    .work-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .work-card:hover { border-color: rgba(0,200,150,.3); transform: translateY(-4px); }
+    .work-thumb {
+      height: 240px; overflow: hidden;
+      background: var(--surface);
+    }
+    .work-thumb img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.8); }
+    .work-thumb-code {
+      height: 240px;
+      display: grid; place-items: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem; font-weight: 800;
+      color: var(--green);
+      background: linear-gradient(135deg, #0d1a17, #0a1410);
+    }
+    .work-body { padding: 24px; }
+    .work-tag { font-size: .7rem; font-weight: 700; letter-spacing: .1em; color: var(--green); }
+    .work-body p { font-size: .88rem; color: var(--muted); margin: .4rem 0 1rem; line-height: 1.65; }
+    .work-link {
+      font-size: .85rem; font-weight: 600; color: var(--green);
+      display: inline-flex; align-items: center; gap: .3rem;
+    }
+    .work-link:hover { text-decoration: underline; }
+    .work-placeholder {
+      height: 100%;
+      min-height: 320px;
+      display: grid; place-items: center;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      text-align: center; padding: 2rem;
+      color: var(--muted);
+    }
+    .work-placeholder .plus {
+      width: 44px; height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: grid; place-items: center;
+      font-size: 1.4rem; margin: 0 auto 1rem;
+      color: var(--muted);
+    }
+
+    /* ── HIRE CTA ── */
+    .hire-band {
+      background: var(--green);
+      color: #000; padding: 80px 0;
+    }
+    .hire-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px; align-items: center;
+    }
+    .hire-band h2 {
+      color: #000;
+      font-size: clamp(2rem,4vw,3rem);
+    }
+    .hire-band p { color: rgba(0,0,0,.65); max-width: 520px; font-size: 1rem; margin-top: .5rem; }
+    .hire-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
+    .hire-chip {
+      padding: 5px 12px;
+      border: 1px solid rgba(0,0,0,.18);
+      border-radius: 999px;
+      font-size: .78rem; font-weight: 600; color: rgba(0,0,0,.7);
+    }
+    .hire-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .btn-dark { background: #000; color: var(--green); }
+    .btn-dark:hover { background: #111; transform: translateY(-2px); }
+    .btn-outline-dark { border: 1px solid rgba(0,0,0,.25); color: #000; }
+    .btn-outline-dark:hover { background: rgba(0,0,0,.08); transform: translateY(-2px); }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 72px; align-items: start;
+    }
+    .contact-links { display: grid; gap: 12px; }
+    .clink {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: var(--card);
+      transition: border-color .2s, background .2s;
+    }
+    .clink:hover { border-color: rgba(0,200,150,.35); background: var(--green-bg); }
+    .clink-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border-radius: 10px;
+      background: var(--green-bg);
+      border: 1px solid rgba(0,200,150,.15);
+      display: grid; place-items: center;
+      font-size: 1rem; color: var(--green);
+    }
+    .clink strong { display: block; font-size: .9rem; color: var(--white); font-weight: 600; }
+    .clink small { font-size: .78rem; color: var(--muted); }
+
+    /* ── CV ── */
+    .cv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cv-card {
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+    }
+    .cv-card h3 { font-size: 1.3rem; margin-bottom: .6rem; }
+    .cv-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+    .cv-list { list-style: none; margin: 1.25rem 0; }
+    .cv-list li {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .88rem; color: var(--muted);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .cv-list li:last-child { border-bottom: 0; }
+    .cv-list li::before { content: '→'; color: var(--green); font-size: .75rem; }
+    .cv-btns { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+    }
+    .footer-row {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+      font-size: .82rem; color: var(--muted);
+    }
+    .footer-row a { color: var(--body); }
+    .footer-row a:hover { color: var(--green); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .ham { display: inline-flex; }
+      .nav-cta { display: none; }
+      .nav-links {
+        position: fixed;
+        inset: 68px 0 auto 0;
+        display: none;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 1.25rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,.5);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 13px 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
+      .nav-links a:last-child { border-bottom: 0; }
+      .hero-inner, .about-grid, .contact-grid, .skills-layout, .cv-grid { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0 70px; }
+      .hero-visual img { height: 360px; }
+      .about-aside { position: static; }
+      .pillars { grid-template-columns: repeat(2,1fr); }
+      .services-grid { grid-template-columns: repeat(2,1fr); }
+      .hire-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .section { padding: 68px 0; }
+      .services-grid, .work-grid, .pillars { grid-template-columns: 1fr; }
+      .hero-visual img { height: 300px; }
+      .footer-row { flex-direction: column; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- NAV -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#home">Collins<em>.</em></a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#home" class="on">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#skills">Skills</a>
+      <a href="#portfolio">Work</a>
+      <a href="#contact">Contact</a>
+      <a href="#cv">CV</a>
+    </nav>
+    <a class="nav-cta" href="#hire">Hire Me</a>
+    <button class="ham" id="ham" aria-label="Open menu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="wrap hero-inner">
+      <div>
+        <p class="label">Available for freelance work</p>
+        <h1>ICT Freelancer<br>& Digital<br><span class="accent">Creator.</span></h1>
+        <p class="hero-desc">I help individuals, businesses and creators with web development, ICT support, data work, video editing and digital content — based in Nairobi, Kenya.</p>
+        <div class="hero-actions">
+          <a class="btn btn-green" href="#hire">Hire Me</a>
+          <a class="btn btn-ghost" href="#portfolio">View Work</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="stat-val">7+</div>
+            <div class="stat-label">Service areas</div>
+          </div>
+          <div>
+            <div class="stat-val">100%</div>
+            <div class="stat-label">Quality focused</div>
+          </div>
+          <div>
+            <div class="stat-val">NBO</div>
+            <div class="stat-label">Nairobi, Kenya</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="https://images.pexels.com/photos/7147697/pexels-photo-7147697.jpeg" alt="Collins working at a laptop">
+        <div class="hero-badge"><span class="dot"></span>Open to new projects</div>
+        <div class="hero-tag">NAIROBI · KE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <div class="pillars" role="list">
+    <div class="pillar" role="listitem">
+      <div class="pillar-icon">✓</div>
+      <h3>Reliable</h3>
+      <p>Professional from brief to delivery, every time.</p>
+    </div>
+    <div class="pillar" role="listitem">
+      <div class="pillar-icon">◎</div>
+      <h3>Accurate</h3>
+      <p>Careful, clean output with thorough checking.</p>
+    </div>
+    <div class="pillar" role="listitem">
+      <div class="pillar-icon">↗</div>
+      <h3>Communicative</h3>
+      <p>Clear updates so nothing gets lost in translation.</p>
+    </div>
+    <div class="pillar" role="listitem">
+      <div class="pillar-icon">◷</div>
+      <h3>On Time</h3>
+      <p>Deadlines taken seriously, not just noted.</p>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="wrap about-grid">
+      <div class="about-aside">
+        <p class="label">About</p>
+        <h2>Practical skills.<br>Real results.</h2>
+        <div class="about-card">
+          <h3>Who I work with</h3>
+          <p>Entrepreneurs, students, small businesses, creators and busy professionals who need reliable digital support.</p>
+          <div class="tag-row">
+            <span class="chip">Small business</span>
+            <span class="chip">Creators</span>
+            <span class="chip">Students</span>
+            <span class="chip">Startups</span>
+            <span class="chip">NGOs</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:1.1rem; color:var(--white); line-height:1.75; margin-bottom:1.25rem;">
+          I'm Collins Pharaoh — an ICT student and freelance digital creator based in Nairobi, Kenya.
+        </p>
+        <p style="color:var(--muted); line-height:1.75; margin-bottom:1.25rem;">
+          I bring a confident, practical approach to digital work. Whether you need a website built, documents prepared, data organised, content created or everyday ICT tasks handled, I focus on making the process simpler and the output genuinely useful.
+        </p>
+        <p style="color:var(--muted); line-height:1.75; margin-bottom:2rem;">
+          My work blends technical skill with creativity and attention to detail — and I'm continuously learning through projects, ICT studies and hands-on experimentation with modern technology.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card);">
+            <div style="font-size:.75rem; color:var(--green); font-weight:700; letter-spacing:.08em; margin-bottom:6px;">LOCATION</div>
+            <div style="color:var(--white); font-weight:600;">Kasarani, Nairobi</div>
+            <div style="font-size:.82rem; color:var(--muted); margin-top:2px;">Kenya</div>
+          </div>
+          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card);">
+            <div style="font-size:.75rem; color:var(--green); font-weight:700; letter-spacing:.08em; margin-bottom:6px;">STATUS</div>
+            <div style="color:var(--white); font-weight:600; display:flex; align-items:center; gap:8px;"><span class="dot"></span>Available now</div>
+            <div style="font-size:.82rem; color:var(--muted); margin-top:2px;">Freelance &amp; remote</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="section section-alt">
+    <div class="wrap">
+      <div style="margin-bottom:48px;">
+        <p class="label">Services</p>
+        <h2>What I do.</h2>
+        <p class="sub">Practical digital services for people who need things done properly.</p>
+      </div>
+      <div class="services-grid">
+        <div class="svc">
+          <div class="svc-icon">▦</div>
+          <h3>Data Entry</h3>
+          <p>Accurate entry, spreadsheets, copying, sorting and well-organised records.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">▤</div>
+          <h3>Document Formatting</h3>
+          <p>Clean, structured Word documents, reports and professional files.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">▶</div>
+          <h3>Video Editing</h3>
+          <p>Polished edits with text, transitions, cuts and social-ready formats.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">#</div>
+          <h3>Social Media Content</h3>
+          <p>Captions and visuals designed for a consistent, professional presence.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">⌘</div>
+          <h3>ICT Support</h3>
+          <p>Computer, software, file-management and digital troubleshooting.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">⌁</div>
+          <h3>Web Development</h3>
+          <p>Responsive websites and landing pages in HTML, CSS and JavaScript.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section">
+    <div class="wrap skills-layout">
+      <div>
+        <p class="label">Skills</p>
+        <h2>Tools &amp; technology.</h2>
+        <p class="sub" style="margin-top:.5rem;">Built through projects, studies and continuous practice.</p>
+        <div class="skills-note" style="margin-top:1.5rem;">
+          <strong>Currently building</strong>
+          Python automation · Cybersecurity fundamentals · Networking · AI projects · Advanced web development
+        </div>
+      </div>
+      <div class="skills-list">
+        <div class="skill-row">
+          <div class="skill-meta"><span>HTML &amp; CSS</span><span class="skill-pct">90%</span></div>
+          <div class="track"><div class="fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>JavaScript</span><span class="skill-pct">70%</span></div>
+          <div class="track"><div class="fill" data-w="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Python</span><span class="skill-pct">70%</span></div>
+          <div class="track"><div class="fill" data-w="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Git &amp; GitHub</span><span class="skill-pct">75%</span></div>
+          <div class="track"><div class="fill" data-w="75"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Video Editing</span><span class="skill-pct">80%</span></div>
+          <div class="track"><div class="fill" data-w="80"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Digital Design</span><span class="skill-pct">75%</span></div>
+          <div class="track"><div class="fill" data-w="75"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>Data Entry</span><span class="skill-pct">90%</span></div>
+          <div class="track"><div class="fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span>ICT Support</span><span class="skill-pct">85%</span></div>
+          <div class="track"><div class="fill" data-w="85"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="section section-alt">
+    <div class="wrap">
+      <div style="margin-bottom:48px;">
+        <p class="label">Selected work</p>
+        <h2>Projects.</h2>
+        <p class="sub">A growing collection of digital work and freelance builds.</p>
+      </div>
+      <div class="work-grid">
+        <div class="work-card">
+          <div class="work-thumb">
+            <img src="https://images.pexels.com/photos/7147697/pexels-photo-7147697.jpeg" alt="Freelance services landing page">
+          </div>
+          <div class="work-body">
+            <div class="work-tag">WEB · FREELANCE</div>
+            <h3>Freelance Services Page</h3>
+            <p>A service-focused landing page giving potential clients a clear view of offerings and a direct path to contact.</p>
+            <a class="work-link" href="https://pharaoh64.github.io/freelance-services/" target="_blank" rel="noopener">View live project →</a>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb-code">&lt;/&gt;</div>
+          <div class="work-body">
+            <div class="work-tag">WEB · PORTFOLIO</div>
+            <h3>This Portfolio</h3>
+            <p>A fully responsive portfolio showcasing ICT skills, services and projects — built in pure HTML, CSS and JS.</p>
+            <a class="work-link" href="#home">You're looking at it →</a>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb-code" style="font-size:2.5rem;">AI</div>
+          <div class="work-body">
+            <div class="work-tag">PYTHON · AI</div>
+            <h3>JARVIS AI Assistant</h3>
+            <p>An experimental Python personal assistant built to execute commands, interact with software and evolve with use.</p>
+            <span class="work-link" style="opacity:.55; cursor:default;">In development</span>
+          </div>
+        </div>
+        <div class="work-placeholder">
+          <div class="plus">+</div>
+          <h3 style="color:var(--muted); font-size:1rem;">More coming soon</h3>
+          <p style="font-size:.85rem; color:var(--muted); margin-top:.4rem;">Projects are added here as they complete.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIRE -->
+  <section id="hire" class="hire-band">
+    <div class="wrap hire-inner">
+      <div>
+        <h2>Have a project?<br>Let's get it done.</h2>
+        <p>Available for web development, ICT support, data work, video editing and digital content. Remote and Nairobi-based.</p>
+        <div class="hire-chips">
+          <span class="hire-chip">Web Development</span>
+          <span class="hire-chip">ICT Support</span>
+          <span class="hire-chip">Video Editing</span>
+          <span class="hire-chip">Data Entry</span>
+          <span class="hire-chip">Digital Content</span>
+        </div>
+      </div>
+      <div class="hire-btns">
+        <a class="btn btn-dark" href="https://wa.me/254700171187" target="_blank" rel="noopener">WhatsApp Me</a>
+        <a class="btn btn-outline-dark" href="mailto:collinspharaoh79@gmail.com">Send Email</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="wrap contact-grid">
+      <div>
+        <p class="label">Contact</p>
+        <h2>Let's talk.</h2>
+        <p class="sub">Send your requirements and I'll get back to you. I'm available for freelance work, collaborations and short-term contracts.</p>
+        <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:2rem;">
+          <a class="btn btn-green" href="https://wa.me/254700171187" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn btn-ghost" href="mailto:collinspharaoh79@gmail.com">Email Me</a>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a class="clink" href="https://wa.me/254700171187" target="_blank" rel="noopener">
+          <span class="clink-icon">◉</span>
+          <span><strong>WhatsApp</strong><small>+254 700 171 187</small></span>
+        </a>
+        <a class="clink" href="mailto:collinspharaoh79@gmail.com">
+          <span class="clink-icon">@</span>
+          <span><strong>Email</strong><small>collinspharaoh79@gmail.com</small></span>
+        </a>
+        <a class="clink" href="https://github.com/pharaoh64" target="_blank" rel="noopener">
+          <span class="clink-icon">⌘</span>
+          <span><strong>GitHub</strong><small>github.com/pharaoh64</small></span>
+        </a>
+        <a class="clink" href="https://www.google.com/maps/search/?api=1&query=Kasarani+Stadium,Nairobi,Kenya" target="_blank" rel="noopener">
+          <span class="clink-icon">⌖</span>
+          <span><strong>Location</strong><small>Kasarani, Nairobi, Kenya</small></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CV -->
+  <section id="cv" class="section section-alt">
+    <div class="wrap">
+      <div style="margin-bottom:48px;">
+        <p class="label">CV</p>
+        <h2>Professional profile.</h2>
+        <p class="sub">A snapshot of my technical background and capabilities.</p>
+      </div>
+      <div class="cv-grid">
+        <div class="cv-card">
+          <h3>Curriculum Vitae</h3>
+          <p>Education, skills, experience and professional information — in full.</p>
+          <ul class="cv-list">
+            <li>ICT technical background</li>
+            <li>Web development</li>
+            <li>Digital content &amp; video editing</li>
+            <li>Data entry &amp; document formatting</li>
+            <li>GitHub &amp; digital project development</li>
+          </ul>
+          <div class="cv-btns">
+            <a class="btn btn-green" href="CV.pdf" target="_blank" rel="noopener">View CV</a>
+            <a class="btn btn-ghost" href="CV.pdf" download="Pharaoh_Collins_CV.pdf">Download</a>
+          </div>
+        </div>
+        <div class="cv-card">
+          <h3>Let's work together.</h3>
+          <p>I'm open to freelance projects, collaborations and opportunities where I can apply my technical and creative skills.</p>
+          <ul class="cv-list">
+            <li>Nairobi, Kenya</li>
+            <li>Kasarani area</li>
+            <li>Available for digital projects</li>
+            <li>Remote-friendly</li>
+            <li>Continuously developing new skills</li>
+          </ul>
+          <a class="btn btn-green" href="#hire">Hire Me</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap footer-row">
+    <span>© 2026 Collins Pharaoh. All rights reserved.</span>
+    <div style="display:flex; gap:1.5rem;">
+      <a href="https://github.com/pharaoh64" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:collinspharaoh79@gmail.com">Email</a>
+      <a href="#home">Top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Mobile nav */
+  const ham = document.getElementById('ham');
+  const nav = document.getElementById('navLinks');
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    ham.setAttribute('aria-expanded', open);
+    ham.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    ham.textContent = open ? '✕' : '☰';
+    document.body.classList.toggle('locked', open);
+  });
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    nav.classList.remove('open');
+    ham.setAttribute('aria-expanded', 'false');
+    ham.setAttribute('aria-label', 'Open menu');
+    ham.textContent = '☰';
+    document.body.classList.remove('locked');
+  }));
+
+  /* Active nav link */
+  const secs = [...document.querySelectorAll('main section[id]')];
+  const links = [...document.querySelectorAll('.nav-links a')];
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting)
+        links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' }).observe
+  && secs.forEach(s => new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting)
+        links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' }).observe(s));
+
+  /* Skill bars */
+  const fills = document.querySelectorAll('.fill');
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.width = e.target.dataset.w + '%';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.width = e.target.dataset.w + '%';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  fills.forEach(f => observer.observe(f));
+</script>
+</body>
+</html>
