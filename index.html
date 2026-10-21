@@ -10,6 +10,13 @@
   <meta property="og:title" content="FL Tech Studio | Farrel Lumumba — Nairobi">
   <meta property="og:description" content="Practical digital services delivered with precision. Web development, ICT support, video editing and more.">
   <meta property="og:type" content="website">
+
+  <!-- ── SECURITY HEADERS (meta fallbacks) ── -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.pexels.com data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:;">
+
   <title>Farrel Lumumba | FL Tech Studio — Nairobi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,8 +36,10 @@
       --green-dim:#00a87e;
       --green-bg: rgba(0,200,150,.07);
       --shadow:   0 24px 60px rgba(0,0,0,.45);
+      --shadow-3d:0 40px 80px rgba(0,0,0,.6);
       --r:        14px;
     }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; font-size: 16px; }
     body {
@@ -39,11 +48,12 @@
       font-family: 'Inter', system-ui, sans-serif;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     body.locked { overflow: hidden; }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
-    button { font: inherit; cursor: pointer; }
+    button { font: inherit; cursor: pointer; border: none; }
 
     /* ── SKIP ── */
     .skip {
@@ -56,6 +66,13 @@
 
     /* ── LAYOUT ── */
     .wrap { width: min(1100px, 100% - 2.5rem); margin: auto; }
+
+    /* ── PARTICLE CANVAS ── */
+    #particles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      opacity: .45;
+    }
 
     /* ── NAV ── */
     header {
@@ -76,9 +93,7 @@
       color: var(--white); letter-spacing: -.02em;
     }
     .brand em { color: var(--green); font-style: normal; }
-    .nav-links {
-      display: flex; align-items: center; gap: 2rem;
-    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
     .nav-links a {
       font-size: .85rem; font-weight: 500;
       color: var(--muted); letter-spacing: .01em;
@@ -90,13 +105,17 @@
       padding: .55rem 1.15rem;
       background: var(--green); color: #000;
       border-radius: 999px; font-weight: 600; font-size: .85rem;
-      transition: background .2s, transform .2s;
+      transition: background .2s, transform .2s, box-shadow .2s;
     }
-    .nav-cta:hover { background: var(--green-dim); transform: translateY(-1px); }
+    .nav-cta:hover {
+      background: var(--green-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,200,150,.35);
+    }
     .ham {
       display: none;
       width: 40px; height: 40px;
-      border: 1px solid var(--line); border-radius: 8px;
+      border: 1px solid var(--line) !important; border-radius: 8px;
       background: var(--surface); color: var(--body);
       font-size: 1.2rem; align-items: center; justify-content: center;
     }
@@ -105,19 +124,24 @@
     .btn {
       display: inline-flex; align-items: center; gap: .45rem;
       padding: .72rem 1.4rem; border-radius: 999px;
-      font-weight: 600; font-size: .9rem; transition: .2s;
+      font-weight: 600; font-size: .9rem;
+      transition: transform .2s, box-shadow .2s, background .2s, border-color .2s, color .2s;
     }
-    .btn-green {
-      background: var(--green); color: #000;
+    .btn-green { background: var(--green); color: #000; }
+    .btn-green:hover {
+      background: var(--green-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,200,150,.35);
     }
-    .btn-green:hover { background: var(--green-dim); transform: translateY(-2px); }
-    .btn-ghost {
-      border: 1px solid var(--line); color: var(--body);
+    .btn-ghost { border: 1px solid var(--line); color: var(--body); }
+    .btn-ghost:hover {
+      border-color: var(--green); color: var(--green);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,200,150,.15);
     }
-    .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
 
     /* ── SECTION BASE ── */
-    section { scroll-margin-top: 80px; }
+    section { scroll-margin-top: 80px; position: relative; z-index: 1; }
     .section { padding: 96px 0; }
     .section-alt { background: var(--surface); border-block: 1px solid var(--line); }
     .label {
@@ -146,12 +170,40 @@
       max-width: 560px; line-height: 1.7;
     }
 
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px) translateZ(-20px);
+      transition: opacity .7s cubic-bezier(.4,0,.2,1),
+                  transform .7s cubic-bezier(.4,0,.2,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0) translateZ(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ── 3D TILT WRAPPER ── */
+    .tilt {
+      transform-style: preserve-3d;
+      transition: transform .15s ease;
+      will-change: transform;
+    }
+
     /* ── HERO ── */
-    .hero { padding: 100px 0 110px; position: relative; overflow: hidden; }
+    .hero {
+      padding: 100px 0 110px;
+      position: relative; overflow: hidden;
+    }
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 70% 40%, rgba(0,200,150,.06), transparent 70%);
+      background:
+        radial-gradient(ellipse 70% 60% at 70% 40%, rgba(0,200,150,.08), transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,200,150,.04), transparent 60%);
       pointer-events: none;
     }
     .hero-inner {
@@ -171,8 +223,7 @@
     .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
     .hero-stats {
       display: flex; gap: 2rem; flex-wrap: wrap;
-      margin-top: 2.5rem;
-      padding-top: 2rem;
+      margin-top: 2.5rem; padding-top: 2rem;
       border-top: 1px solid var(--line);
     }
     .stat-val {
@@ -182,14 +233,24 @@
     }
     .stat-label { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
 
-    /* Hero image panel */
+    /* Hero image panel — 3D float */
     .hero-visual {
       position: relative;
-      border-radius: 20px;
-      overflow: hidden;
+      border-radius: 20px; overflow: hidden;
       background: var(--card);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-3d), 0 0 0 1px rgba(0,200,150,.08);
+      transform: perspective(800px) rotateY(-6deg) rotateX(2deg);
+      transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s;
+      animation: heroFloat 6s ease-in-out infinite;
+    }
+    .hero-visual:hover {
+      transform: perspective(800px) rotateY(-2deg) rotateX(1deg) translateY(-6px);
+      box-shadow: var(--shadow-3d), 0 0 60px rgba(0,200,150,.12);
+    }
+    @keyframes heroFloat {
+      0%, 100% { transform: perspective(800px) rotateY(-6deg) rotateX(2deg) translateY(0); }
+      50%       { transform: perspective(800px) rotateY(-4deg) rotateX(3deg) translateY(-10px); }
     }
     .hero-visual img {
       width: 100%; height: 480px; object-fit: cover;
@@ -200,8 +261,7 @@
       display: flex; align-items: center; gap: 10px;
       background: rgba(10,15,14,.85);
       backdrop-filter: blur(12px);
-      border: 1px solid var(--line);
-      border-radius: 12px;
+      border: 1px solid var(--line); border-radius: 12px;
       padding: 10px 16px;
       font-size: .82rem; font-weight: 600; color: var(--white);
     }
@@ -210,86 +270,108 @@
       background: var(--green); border-radius: 50%;
       box-shadow: 0 0 0 3px rgba(0,200,150,.2);
       flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(0,200,150,.2); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,200,150,.1); }
     }
     .hero-tag {
       position: absolute; top: 18px; right: 18px;
       background: var(--green); color: #000;
       font-size: .7rem; font-weight: 700;
-      letter-spacing: .1em;
-      padding: 6px 12px; border-radius: 999px;
+      letter-spacing: .1em; padding: 6px 12px; border-radius: 999px;
     }
 
     /* ── PILLARS ── */
     .pillars { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); }
     .pillar {
-      background: var(--surface);
-      padding: 28px 24px;
+      background: var(--surface); padding: 28px 24px;
+      transition: background .25s, transform .25s;
+      position: relative; z-index: 1;
     }
+    .pillar:hover { background: #161f1d; transform: translateY(-3px); }
     .pillar-icon {
-      width: 38px; height: 38px;
-      border-radius: 10px;
-      background: var(--green-bg);
-      border: 1px solid rgba(0,200,150,.2);
-      display: grid; place-items: center;
-      font-size: 1rem; margin-bottom: 16px;
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--green-bg); border: 1px solid rgba(0,200,150,.2);
+      display: grid; place-items: center; font-size: 1rem; margin-bottom: 16px;
+      transition: box-shadow .25s;
     }
+    .pillar:hover .pillar-icon { box-shadow: 0 0 20px rgba(0,200,150,.2); }
     .pillar p { font-size: .88rem; color: var(--muted); margin-top: .3rem; }
 
     /* ── ABOUT ── */
     .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
+      display: grid; grid-template-columns: 1fr 1.4fr;
       gap: 72px; align-items: start;
     }
-    .about-aside {
-      position: sticky; top: 100px;
-    }
+    .about-aside { position: sticky; top: 100px; }
     .about-card {
-      margin-top: 1.5rem;
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: var(--r);
+      margin-top: 1.5rem; padding: 20px;
+      border: 1px solid var(--line); border-radius: var(--r);
       background: var(--card);
     }
     .about-card p { font-size: .88rem; color: var(--muted); margin-top: .5rem; }
     .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
     .chip {
-      padding: 5px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-size: .75rem; color: var(--muted);
+      padding: 5px 12px; border: 1px solid var(--line);
+      border-radius: 999px; font-size: .75rem; color: var(--muted);
+      transition: border-color .2s, color .2s;
     }
+    .chip:hover { border-color: var(--green); color: var(--green); }
 
-    /* ── SERVICES ── */
+    /* ── SERVICES — 3D flip cards ── */
     .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 1px; background: var(--line);
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 20px;
     }
-    .svc {
-      background: var(--card);
-      padding: 32px 28px;
-      transition: background .2s;
+    .svc-wrapper {
+      perspective: 800px;
+      height: 220px;
     }
-    .svc:hover { background: #1a2421; }
+    .svc-inner {
+      position: relative; width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .6s cubic-bezier(.4,0,.2,1);
+    }
+    .svc-wrapper:hover .svc-inner { transform: rotateY(180deg); }
+    .svc-front, .svc-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex; flex-direction: column;
+    }
+    .svc-front {
+      background: var(--card); border: 1px solid var(--line);
+    }
+    .svc-back {
+      background: linear-gradient(135deg, #0d201a, #0a1a15);
+      border: 1px solid rgba(0,200,150,.3);
+      transform: rotateY(180deg);
+      justify-content: center; align-items: flex-start;
+    }
     .svc-icon {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      background: var(--green-bg);
-      border: 1px solid rgba(0,200,150,.18);
-      display: grid; place-items: center;
-      font-size: 1.15rem; margin-bottom: 20px;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--green-bg); border: 1px solid rgba(0,200,150,.18);
+      display: grid; place-items: center; font-size: 1.15rem; margin-bottom: 16px;
     }
-    .svc p { font-size: .88rem; color: var(--muted); margin-top: .4rem; line-height: 1.65; }
+    .svc-front p { font-size: .88rem; color: var(--muted); margin-top: .4rem; line-height: 1.65; }
+    .svc-back h3 { color: var(--green); margin-bottom: .75rem; font-size: 1rem; }
+    .svc-back ul { list-style: none; }
+    .svc-back ul li {
+      font-size: .82rem; color: var(--body); padding: 4px 0;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .svc-back ul li::before { content: '→'; color: var(--green); font-size: .7rem; }
+    .svc-hint { font-size: .68rem; color: var(--muted); margin-top: auto; text-align: right; }
 
     /* ── SKILLS ── */
     .skills-layout {
-      display: grid;
-      grid-template-columns: .8fr 1.2fr;
+      display: grid; grid-template-columns: .8fr 1.2fr;
       gap: 72px; align-items: start;
     }
     .skills-list { display: grid; gap: 14px; }
-    .skill-row { }
     .skill-meta {
       display: flex; justify-content: space-between;
       font-size: .85rem; font-weight: 600;
@@ -297,146 +379,197 @@
     }
     .skill-pct { color: var(--green); }
     .track {
-      height: 4px; background: var(--line);
+      height: 6px; background: var(--line);
       border-radius: 99px; overflow: hidden;
     }
     .fill {
-      height: 100%; background: var(--green);
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-dim), var(--green));
       border-radius: 99px; width: 0;
-      transition: width 1.1s cubic-bezier(.4,0,.2,1);
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 10px rgba(0,200,150,.4);
     }
     .skills-note {
-      margin-top: 1.5rem;
-      padding: 18px 20px;
-      background: var(--green-bg);
-      border: 1px solid rgba(0,200,150,.15);
-      border-radius: var(--r);
-      font-size: .85rem; color: var(--muted);
+      margin-top: 1.5rem; padding: 18px 20px;
+      background: var(--green-bg); border: 1px solid rgba(0,200,150,.15);
+      border-radius: var(--r); font-size: .85rem; color: var(--muted);
     }
     .skills-note strong { color: var(--green); display: block; margin-bottom: 4px; }
 
-    /* ── PORTFOLIO ── */
+    /* ── PORTFOLIO — 3D hover cards ── */
     .work-grid {
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
+      display: grid; grid-template-columns: repeat(2,1fr);
       gap: 20px;
     }
     .work-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--card);
-      overflow: hidden;
-      transition: border-color .2s, transform .2s;
+      border: 1px solid var(--line); border-radius: 18px;
+      background: var(--card); overflow: hidden;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+      transform-style: preserve-3d;
+      will-change: transform;
     }
-    .work-card:hover { border-color: rgba(0,200,150,.3); transform: translateY(-4px); }
-    .work-thumb {
-      height: 240px; overflow: hidden;
-      background: var(--surface);
+    .work-card:hover {
+      border-color: rgba(0,200,150,.4);
+      box-shadow: 0 30px 60px rgba(0,0,0,.5), 0 0 40px rgba(0,200,150,.1);
     }
-    .work-thumb img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.8); }
+    .work-thumb { height: 220px; overflow: hidden; background: var(--surface); }
+    .work-thumb img {
+      width: 100%; height: 100%; object-fit: cover; filter: saturate(.8);
+      transition: transform .5s ease, filter .5s ease;
+    }
+    .work-card:hover .work-thumb img {
+      transform: scale(1.05);
+      filter: saturate(1);
+    }
     .work-thumb-code {
-      height: 240px;
-      display: grid; place-items: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 3.5rem; font-weight: 800;
+      height: 220px; display: grid; place-items: center;
+      font-family: 'Syne', sans-serif; font-size: 3.5rem; font-weight: 800;
       color: var(--green);
       background: linear-gradient(135deg, #0d1a17, #0a1410);
+      transition: transform .3s;
     }
+    .work-card:hover .work-thumb-code { transform: scale(1.05); }
     .work-body { padding: 24px; }
     .work-tag { font-size: .7rem; font-weight: 700; letter-spacing: .1em; color: var(--green); }
     .work-body p { font-size: .88rem; color: var(--muted); margin: .4rem 0 1rem; line-height: 1.65; }
     .work-link {
       font-size: .85rem; font-weight: 600; color: var(--green);
       display: inline-flex; align-items: center; gap: .3rem;
+      transition: gap .2s;
     }
-    .work-link:hover { text-decoration: underline; }
+    .work-link:hover { gap: .6rem; text-decoration: underline; }
     .work-placeholder {
-      height: 100%;
-      min-height: 320px;
+      height: 100%; min-height: 320px;
       display: grid; place-items: center;
-      border: 1px dashed var(--line);
-      border-radius: 18px;
-      text-align: center; padding: 2rem;
-      color: var(--muted);
+      border: 1px dashed var(--line); border-radius: 18px;
+      text-align: center; padding: 2rem; color: var(--muted);
+      transition: border-color .2s;
     }
+    .work-placeholder:hover { border-color: rgba(0,200,150,.3); }
     .work-placeholder .plus {
-      width: 44px; height: 44px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      display: grid; place-items: center;
-      font-size: 1.4rem; margin: 0 auto 1rem;
-      color: var(--muted);
+      width: 44px; height: 44px; border: 1px solid var(--line);
+      border-radius: 12px; display: grid; place-items: center;
+      font-size: 1.4rem; margin: 0 auto 1rem; color: var(--muted);
     }
 
-    /* ── HIRE CTA ── */
+    /* ── HIRE BAND ── */
     .hire-band {
-      background: var(--green);
-      color: #000; padding: 80px 0;
+      background: var(--green); color: #000; padding: 80px 0;
+      position: relative; overflow: hidden;
+    }
+    .hire-band::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0,0,0,.08), transparent);
+      pointer-events: none;
     }
     .hire-inner {
-      display: grid;
-      grid-template-columns: 1fr auto;
+      display: grid; grid-template-columns: 1fr auto;
       gap: 40px; align-items: center;
     }
-    .hire-band h2 {
-      color: #000;
-      font-size: clamp(2rem,4vw,3rem);
-    }
+    .hire-band h2 { color: #000; font-size: clamp(2rem,4vw,3rem); }
     .hire-band p { color: rgba(0,0,0,.65); max-width: 520px; font-size: 1rem; margin-top: .5rem; }
     .hire-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
     .hire-chip {
-      padding: 5px 12px;
-      border: 1px solid rgba(0,0,0,.18);
-      border-radius: 999px;
-      font-size: .78rem; font-weight: 600; color: rgba(0,0,0,.7);
+      padding: 5px 12px; border: 1px solid rgba(0,0,0,.18);
+      border-radius: 999px; font-size: .78rem; font-weight: 600; color: rgba(0,0,0,.7);
     }
     .hire-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
     .btn-dark { background: #000; color: var(--green); }
-    .btn-dark:hover { background: #111; transform: translateY(-2px); }
+    .btn-dark:hover { background: #111; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.4); }
     .btn-outline-dark { border: 1px solid rgba(0,0,0,.25); color: #000; }
     .btn-outline-dark:hover { background: rgba(0,0,0,.08); transform: translateY(-2px); }
 
-    /* ── CONTACT ── */
+    /* ── CONTACT FORM ── */
     .contact-grid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 72px; align-items: start;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: start;
     }
     .contact-links { display: grid; gap: 12px; }
     .clink {
       display: flex; align-items: center; gap: 14px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--r);
-      background: var(--card);
-      transition: border-color .2s, background .2s;
+      padding: 18px; border: 1px solid var(--line);
+      border-radius: var(--r); background: var(--card);
+      transition: border-color .2s, background .2s, transform .2s;
     }
-    .clink:hover { border-color: rgba(0,200,150,.35); background: var(--green-bg); }
-    .clink-icon {
-      width: 42px; height: 42px; flex-shrink: 0;
-      border-radius: 10px;
+    .clink:hover {
+      border-color: rgba(0,200,150,.35);
       background: var(--green-bg);
-      border: 1px solid rgba(0,200,150,.15);
-      display: grid; place-items: center;
-      font-size: 1rem; color: var(--green);
+      transform: translateX(4px);
+    }
+    .clink-icon {
+      width: 42px; height: 42px; flex-shrink: 0; border-radius: 10px;
+      background: var(--green-bg); border: 1px solid rgba(0,200,150,.15);
+      display: grid; place-items: center; font-size: 1rem; color: var(--green);
     }
     .clink strong { display: block; font-size: .9rem; color: var(--white); font-weight: 600; }
     .clink small { font-size: .78rem; color: var(--muted); }
 
+    /* Contact form */
+    .contact-form {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 18px; padding: 32px;
+    }
+    .contact-form h3 { font-size: 1.1rem; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: .78rem; font-weight: 600;
+      color: var(--muted); letter-spacing: .06em; margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 10px;
+      color: var(--white); font-family: inherit; font-size: .9rem;
+      padding: 12px 14px; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,200,150,.12);
+    }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .form-group select option { background: var(--surface); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-submit {
+      width: 100%; padding: 14px;
+      background: var(--green); color: #000;
+      border-radius: 999px; font-weight: 700; font-size: .95rem;
+      transition: background .2s, transform .2s, box-shadow .2s;
+      margin-top: 4px;
+    }
+    .form-submit:hover {
+      background: var(--green-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,200,150,.35);
+    }
+    .form-success {
+      display: none;
+      text-align: center; padding: 24px;
+      color: var(--green); font-size: .95rem; font-weight: 600;
+    }
+    .form-success.show { display: block; }
+
     /* ── CV ── */
     .cv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .cv-card {
-      padding: 32px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--card);
+      padding: 32px; border: 1px solid var(--line);
+      border-radius: 18px; background: var(--card);
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .cv-card:hover {
+      border-color: rgba(0,200,150,.25);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.3);
     }
     .cv-card h3 { font-size: 1.3rem; margin-bottom: .6rem; }
     .cv-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
     .cv-list { list-style: none; margin: 1.25rem 0; }
     .cv-list li {
-      padding: 9px 0;
-      border-bottom: 1px solid var(--line);
+      padding: 9px 0; border-bottom: 1px solid var(--line);
       font-size: .88rem; color: var(--muted);
       display: flex; align-items: center; gap: .5rem;
     }
@@ -444,33 +577,47 @@
     .cv-list li::before { content: '→'; color: var(--green); font-size: .75rem; }
     .cv-btns { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
 
+    /* CV unavailable note */
+    .cv-notice {
+      font-size: .78rem; color: var(--muted);
+      background: var(--green-bg); border: 1px solid rgba(0,200,150,.15);
+      border-radius: 8px; padding: 10px 14px; margin-top: 12px;
+    }
+
     /* ── FOOTER ── */
     footer {
-      background: var(--bg);
-      border-top: 1px solid var(--line);
-      padding: 28px 0;
+      background: var(--bg); border-top: 1px solid var(--line);
+      padding: 28px 0; position: relative; z-index: 1;
     }
     .footer-row {
       display: flex; align-items: center;
       justify-content: space-between; gap: 1rem;
       font-size: .82rem; color: var(--muted);
     }
-    .footer-row a { color: var(--body); }
+    .footer-row a { color: var(--body); transition: color .2s; }
     .footer-row a:hover { color: var(--green); }
+
+    /* ── 3D FLOATING ORBS (background accent) ── */
+    .orb {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,200,150,.08), transparent 70%);
+      pointer-events: none; z-index: 0;
+      animation: orbFloat var(--dur, 8s) ease-in-out infinite;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-30px) scale(1.05); }
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .ham { display: inline-flex; }
       .nav-cta { display: none; }
       .nav-links {
-        position: fixed;
-        inset: 68px 0 auto 0;
-        display: none;
+        position: fixed; inset: 68px 0 auto 0; display: none;
         flex-direction: column; align-items: stretch; gap: 0;
-        background: var(--surface);
-        border-bottom: 1px solid var(--line);
-        padding: 10px 1.25rem;
-        box-shadow: 0 20px 40px rgba(0,0,0,.5);
+        background: var(--surface); border-bottom: 1px solid var(--line);
+        padding: 10px 1.25rem; box-shadow: 0 20px 40px rgba(0,0,0,.5);
       }
       .nav-links.open { display: flex; }
       .nav-links a { padding: 13px 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
@@ -478,24 +625,33 @@
       .hero-inner, .about-grid, .contact-grid, .skills-layout, .cv-grid { grid-template-columns: 1fr; }
       .hero { padding: 60px 0 70px; }
       .hero-visual img { height: 360px; }
+      .hero-visual { animation: none; transform: none; }
       .about-aside { position: static; }
       .pillars { grid-template-columns: repeat(2,1fr); }
       .services-grid { grid-template-columns: repeat(2,1fr); }
       .hire-inner { grid-template-columns: 1fr; }
+      .svc-wrapper { height: 200px; }
     }
     @media (max-width: 620px) {
       .section { padding: 68px 0; }
       .services-grid, .work-grid, .pillars { grid-template-columns: 1fr; }
+      .svc-wrapper { height: auto; }
+      .svc-inner { transform: none !important; }
+      .svc-back { display: none; }
+      .svc-front { position: static; }
       .hero-visual img { height: 300px; }
       .footer-row { flex-direction: column; align-items: flex-start; }
+      .form-row { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition: none !important; animation: none !important; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
+<canvas id="particles"></canvas>
 <a class="skip" href="#main">Skip to content</a>
 
 <!-- NAV -->
@@ -511,7 +667,7 @@
       <a href="#contact">Contact</a>
       <a href="#cv">CV</a>
     </nav>
-    <a class="nav-cta" href="#hire">Hire Me</a>
+    <a class="nav-cta" href="#contact">Hire Me</a>
     <button class="ham" id="ham" aria-label="Open menu" aria-expanded="false">☰</button>
   </div>
 </header>
@@ -520,16 +676,18 @@
 
   <!-- HERO -->
   <section id="home" class="hero">
+    <div class="orb" style="width:500px;height:500px;top:-100px;right:-100px;--dur:9s;"></div>
+    <div class="orb" style="width:300px;height:300px;bottom:50px;left:-80px;--dur:12s;"></div>
     <div class="wrap hero-inner">
       <div>
-        <p class="label">Available for freelance work</p>
-        <h1>FL Tech<br>Studio<span class="accent">.</span></h1>
-        <p class="hero-desc">Farrel Lumumba — I help individuals, businesses and creators with web development, ICT support, data work, video editing and digital content — based in Nairobi, Kenya.</p>
-        <div class="hero-actions">
-          <a class="btn btn-green" href="#hire">Hire Me</a>
+        <p class="label reveal">Available for freelance work</p>
+        <h1 class="reveal reveal-delay-1">FL Tech<br>Studio<span class="accent">.</span></h1>
+        <p class="hero-desc reveal reveal-delay-2">Farrel Lumumba — I help individuals, businesses and creators with web development, ICT support, data work, video editing and digital content — based in Nairobi, Kenya.</p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a class="btn btn-green" href="#contact">Hire Me</a>
           <a class="btn btn-ghost" href="#portfolio">View Work</a>
         </div>
-        <div class="hero-stats">
+        <div class="hero-stats reveal reveal-delay-4">
           <div>
             <div class="stat-val">7+</div>
             <div class="stat-label">Service areas</div>
@@ -544,8 +702,8 @@
           </div>
         </div>
       </div>
-      <div class="hero-visual">
-        <img src="https://images.pexels.com/photos/7147697/pexels-photo-7147697.jpeg" alt="Collins working at a laptop">
+      <div class="hero-visual tilt" id="heroVisual">
+        <img src="https://images.pexels.com/photos/7147697/pexels-photo-7147697.jpeg" alt="Farrel working at a laptop">
         <div class="hero-badge"><span class="dot"></span>Open to new projects</div>
         <div class="hero-tag">NAIROBI · KE</div>
       </div>
@@ -554,22 +712,22 @@
 
   <!-- PILLARS -->
   <div class="pillars" role="list">
-    <div class="pillar" role="listitem">
+    <div class="pillar reveal" role="listitem">
       <div class="pillar-icon">✓</div>
       <h3>Reliable</h3>
       <p>Professional from brief to delivery, every time.</p>
     </div>
-    <div class="pillar" role="listitem">
+    <div class="pillar reveal reveal-delay-1" role="listitem">
       <div class="pillar-icon">◎</div>
       <h3>Accurate</h3>
       <p>Careful, clean output with thorough checking.</p>
     </div>
-    <div class="pillar" role="listitem">
+    <div class="pillar reveal reveal-delay-2" role="listitem">
       <div class="pillar-icon">↗</div>
       <h3>Communicative</h3>
       <p>Clear updates so nothing gets lost in translation.</p>
     </div>
-    <div class="pillar" role="listitem">
+    <div class="pillar reveal reveal-delay-3" role="listitem">
       <div class="pillar-icon">◷</div>
       <h3>On Time</h3>
       <p>Deadlines taken seriously, not just noted.</p>
@@ -579,7 +737,7 @@
   <!-- ABOUT -->
   <section id="about" class="section">
     <div class="wrap about-grid">
-      <div class="about-aside">
+      <div class="about-aside reveal">
         <p class="label">About</p>
         <h2>Practical skills.<br>Real results.</h2>
         <div class="about-card">
@@ -594,7 +752,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div class="reveal reveal-delay-2">
         <p style="font-size:1.1rem; color:var(--white); line-height:1.75; margin-bottom:1.25rem;">
           I'm Farrel Lumumba — an ICT student and freelance digital creator based in Nairobi, Kenya.
         </p>
@@ -605,12 +763,12 @@
           My work blends technical skill with creativity and attention to detail — and I'm continuously learning through projects, ICT studies and hands-on experimentation with modern technology.
         </p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card);">
+          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card); transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(0,200,150,.3)'" onmouseout="this.style.borderColor='var(--line)'">
             <div style="font-size:.75rem; color:var(--green); font-weight:700; letter-spacing:.08em; margin-bottom:6px;">LOCATION</div>
             <div style="color:var(--white); font-weight:600;">Kasarani, Nairobi</div>
             <div style="font-size:.82rem; color:var(--muted); margin-top:2px;">Kenya</div>
           </div>
-          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card);">
+          <div style="padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card); transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(0,200,150,.3)'" onmouseout="this.style.borderColor='var(--line)'">
             <div style="font-size:.75rem; color:var(--green); font-weight:700; letter-spacing:.08em; margin-bottom:6px;">STATUS</div>
             <div style="color:var(--white); font-weight:600; display:flex; align-items:center; gap:8px;"><span class="dot"></span>Available now</div>
             <div style="font-size:.82rem; color:var(--muted); margin-top:2px;">Freelance &amp; remote</div>
@@ -623,42 +781,139 @@
   <!-- SERVICES -->
   <section id="services" class="section section-alt">
     <div class="wrap">
-      <div style="margin-bottom:48px;">
+      <div style="margin-bottom:48px;" class="reveal">
         <p class="label">Services</p>
         <h2>What I do.</h2>
-        <p class="sub">Practical digital services for people who need things done properly.</p>
+        <p class="sub">Hover a card to see what's included. Practical services done properly.</p>
       </div>
       <div class="services-grid">
-        <div class="svc">
-          <div class="svc-icon">▦</div>
-          <h3>Data Entry</h3>
-          <p>Accurate entry, spreadsheets, copying, sorting and well-organised records.</p>
+
+        <div class="svc-wrapper reveal">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">▦</div>
+              <h3>Data Entry</h3>
+              <p>Accurate entry, spreadsheets, copying, sorting and well-organised records.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>Data Entry</h3>
+              <ul>
+                <li>Spreadsheet creation &amp; clean-up</li>
+                <li>Copy typing from documents</li>
+                <li>Database record entry</li>
+                <li>Data sorting &amp; categorisation</li>
+                <li>Excel &amp; Google Sheets</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="svc">
-          <div class="svc-icon">▤</div>
-          <h3>Document Formatting</h3>
-          <p>Clean, structured Word documents, reports and professional files.</p>
+
+        <div class="svc-wrapper reveal reveal-delay-1">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">▤</div>
+              <h3>Document Formatting</h3>
+              <p>Clean, structured Word documents, reports and professional files.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>Document Formatting</h3>
+              <ul>
+                <li>Word &amp; PDF formatting</li>
+                <li>Report &amp; proposal layout</li>
+                <li>CV and cover letter design</li>
+                <li>Templates &amp; style guides</li>
+                <li>Proofreading &amp; editing</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="svc">
-          <div class="svc-icon">▶</div>
-          <h3>Video Editing</h3>
-          <p>Polished edits with text, transitions, cuts and social-ready formats.</p>
+
+        <div class="svc-wrapper reveal reveal-delay-2">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">▶</div>
+              <h3>Video Editing</h3>
+              <p>Polished edits with text, transitions, cuts and social-ready formats.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>Video Editing</h3>
+              <ul>
+                <li>Cuts, trims &amp; scene assembly</li>
+                <li>Text overlays &amp; captions</li>
+                <li>Transitions &amp; effects</li>
+                <li>Social media formats (Reels, TikTok)</li>
+                <li>YouTube &amp; long-form edits</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="svc">
-          <div class="svc-icon">#</div>
-          <h3>Social Media Content</h3>
-          <p>Captions and visuals designed for a consistent, professional presence.</p>
+
+        <div class="svc-wrapper reveal">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">#</div>
+              <h3>Social Media Content</h3>
+              <p>Captions and visuals designed for a consistent, professional presence.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>Social Media</h3>
+              <ul>
+                <li>Caption writing &amp; scheduling</li>
+                <li>Graphic design for posts</li>
+                <li>Instagram, Facebook, X</li>
+                <li>LinkedIn professional content</li>
+                <li>Content calendar planning</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="svc">
-          <div class="svc-icon">⌘</div>
-          <h3>ICT Support</h3>
-          <p>Computer, software, file-management and digital troubleshooting.</p>
+
+        <div class="svc-wrapper reveal reveal-delay-1">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">⌘</div>
+              <h3>ICT Support</h3>
+              <p>Computer, software, file-management and digital troubleshooting.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>ICT Support</h3>
+              <ul>
+                <li>Software setup &amp; configuration</li>
+                <li>File management &amp; backups</li>
+                <li>Basic networking help</li>
+                <li>Device troubleshooting</li>
+                <li>Remote support available</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="svc">
-          <div class="svc-icon">⌁</div>
-          <h3>Web Development</h3>
-          <p>Responsive websites and landing pages in HTML, CSS and JavaScript.</p>
+
+        <div class="svc-wrapper reveal reveal-delay-2">
+          <div class="svc-inner">
+            <div class="svc-front">
+              <div class="svc-icon">⌁</div>
+              <h3>Web Development</h3>
+              <p>Responsive websites and landing pages in HTML, CSS and JavaScript.</p>
+              <span class="svc-hint">hover to see more ↻</span>
+            </div>
+            <div class="svc-back">
+              <h3>Web Development</h3>
+              <ul>
+                <li>Portfolio &amp; landing pages</li>
+                <li>Responsive mobile-first design</li>
+                <li>HTML, CSS &amp; JavaScript</li>
+                <li>GitHub Pages deployment</li>
+                <li>Speed &amp; accessibility focused</li>
+              </ul>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -666,16 +921,16 @@
   <!-- SKILLS -->
   <section id="skills" class="section">
     <div class="wrap skills-layout">
-      <div>
+      <div class="reveal">
         <p class="label">Skills</p>
-        <h2>Tools &amp; technology.</h2>
+        <h2>Tools &amp;<br>technology.</h2>
         <p class="sub" style="margin-top:.5rem;">Built through projects, studies and continuous practice.</p>
         <div class="skills-note" style="margin-top:1.5rem;">
           <strong>Currently building</strong>
           Python automation · Cybersecurity fundamentals · Networking · AI projects · Advanced web development
         </div>
       </div>
-      <div class="skills-list">
+      <div class="skills-list reveal reveal-delay-2">
         <div class="skill-row">
           <div class="skill-meta"><span>HTML &amp; CSS</span><span class="skill-pct">90%</span></div>
           <div class="track"><div class="fill" data-w="90"></div></div>
@@ -715,51 +970,72 @@
   <!-- PORTFOLIO -->
   <section id="portfolio" class="section section-alt">
     <div class="wrap">
-      <div style="margin-bottom:48px;">
+      <div style="margin-bottom:48px;" class="reveal">
         <p class="label">Selected work</p>
         <h2>Projects.</h2>
         <p class="sub">A growing collection of digital work and freelance builds.</p>
       </div>
       <div class="work-grid">
-        <div class="work-card">
-          <div class="work-thumb">
-            <img src="https://images.pexels.com/photos/7147697/pexels-photo-7147697.jpeg" alt="Freelance services landing page">
-          </div>
-          <div class="work-body">
-            <div class="work-tag">WEB · FREELANCE</div>
-            <h3>Freelance Services Page</h3>
-            <p>A service-focused landing page giving potential clients a clear view of offerings and a direct path to contact.</p>
-            <a class="work-link" href="https://pharaoh64.github.io/FL_STUDIO/" target="_blank" rel="noopener">View live project →</a>
-          </div>
-        </div>
-        <div class="work-card">
+
+        <!-- Project 1: FL Tech Studio Portfolio -->
+        <div class="work-card reveal" id="card1">
           <div class="work-thumb-code">&lt;/&gt;</div>
           <div class="work-body">
             <div class="work-tag">WEB · PORTFOLIO</div>
-            <h3>This Portfolio</h3>
-            <p>A fully responsive portfolio showcasing ICT skills, services and projects — built in pure HTML, CSS and JS.</p>
-            <a class="work-link" href="#home">You're looking at it →</a>
+            <h3>FL Tech Studio Portfolio</h3>
+            <p>A fully responsive, animated portfolio showcasing ICT skills, services and projects — built in pure HTML, CSS and JS. This site.</p>
+            <a class="work-link" href="https://pharaoh64.github.io/FL_STUDIO/" target="_blank" rel="noopener">View live →</a>
           </div>
         </div>
-        <div class="work-card">
-          <div class="work-thumb-code" style="font-size:2.5rem;">AI</div>
+
+        <!-- Project 2: JARVIS AI Assistant -->
+        <div class="work-card reveal reveal-delay-1" id="card2">
+          <div class="work-thumb-code" style="font-size:2.5rem; background:linear-gradient(135deg,#0a0f1a,#0a1a10);">AI</div>
           <div class="work-body">
             <div class="work-tag">PYTHON · AI</div>
             <h3>JARVIS AI Assistant</h3>
-            <p>An experimental Python personal assistant built to execute commands, interact with software and evolve with use.</p>
+            <p>An experimental Python personal assistant built to execute commands, interact with software and evolve with use. Voice + command interface.</p>
             <span class="work-link" style="opacity:.55; cursor:default;">In development</span>
           </div>
         </div>
-        <div class="work-placeholder">
-          <div class="plus">+</div>
-          <h3 style="color:var(--muted); font-size:1rem;">More coming soon</h3>
-          <p style="font-size:.85rem; color:var(--muted); margin-top:.4rem;">Projects are added here as they complete.</p>
+
+        <!-- Project 3: Data Dashboard -->
+        <div class="work-card reveal" id="card3">
+          <div class="work-thumb-code" style="font-size:2rem; background:linear-gradient(135deg,#0a1420,#0d1a15);">
+            <span style="display:grid; gap:6px; text-align:center; font-size:1rem;">
+              <span style="font-size:2.5rem;">📊</span>
+              <span style="font-size:.85rem; color:var(--muted);">Dashboard</span>
+            </span>
+          </div>
+          <div class="work-body">
+            <div class="work-tag">DATA · EXCEL</div>
+            <h3>Data Dashboard</h3>
+            <p>A spreadsheet reporting project is planned for this slot. Details will be added when it is complete.</p>
+            <span class="work-link" style="opacity:.55; cursor:default;">Coming soon</span>
+          </div>
         </div>
+
+        <!-- Project 4: Video Edit Reel -->
+        <div class="work-card reveal reveal-delay-1" id="card4">
+          <div class="work-thumb-code" style="font-size:2rem; background:linear-gradient(135deg,#1a0a14,#0a1015);">
+            <span style="display:grid; gap:6px; text-align:center;">
+              <span style="font-size:2.5rem;">🎬</span>
+              <span style="font-size:.85rem; color:var(--muted);">Video</span>
+            </span>
+          </div>
+          <div class="work-body">
+            <div class="work-tag">VIDEO · EDITING</div>
+            <h3>Video Editing Reel</h3>
+            <p>A showcase of short-form video edits is planned for this slot. Samples will be added when they are ready.</p>
+            <span class="work-link" style="opacity:.55; cursor:default;">Coming soon</span>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- HIRE -->
+  <!-- HIRE BAND -->
   <section id="hire" class="hire-band">
     <div class="wrap hire-inner">
       <div>
@@ -775,40 +1051,89 @@
       </div>
       <div class="hire-btns">
         <a class="btn btn-dark" href="https://wa.me/254700171187" target="_blank" rel="noopener">WhatsApp Me</a>
-        <a class="btn btn-outline-dark" href="mailto:collinspharaoh79@gmail.com">Send Email</a>
+        <a class="btn btn-outline-dark" href="#contact">Send Message</a>
       </div>
     </div>
   </section>
 
   <!-- CONTACT -->
   <section id="contact" class="section">
-    <div class="wrap contact-grid">
-      <div>
+    <div class="wrap">
+      <div style="margin-bottom:48px;" class="reveal">
         <p class="label">Contact</p>
         <h2>Let's talk.</h2>
-        <p class="sub">Send your requirements and I'll get back to you. I'm available for freelance work, collaborations and short-term contracts.</p>
-        <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:2rem;">
-          <a class="btn btn-green" href="https://wa.me/254700171187" target="_blank" rel="noopener">WhatsApp</a>
-          <a class="btn btn-ghost" href="mailto:collinspharaoh79@gmail.com">Email Me</a>
-        </div>
+        <p class="sub">Fill in the form or reach out directly. I respond within 24 hours.</p>
       </div>
-      <div class="contact-links">
-        <a class="clink" href="https://wa.me/254700171187" target="_blank" rel="noopener">
-          <span class="clink-icon">◉</span>
-          <span><strong>WhatsApp</strong><small>+254 700 171 187</small></span>
-        </a>
-        <a class="clink" href="mailto:collinspharaoh79@gmail.com">
-          <span class="clink-icon">@</span>
-          <span><strong>Email</strong><small>collinspharaoh79@gmail.com</small></span>
-        </a>
-        <a class="clink" href="https://github.com/pharaoh64" target="_blank" rel="noopener">
-          <span class="clink-icon">⌘</span>
-          <span><strong>GitHub</strong><small>github.com/pharaoh64</small></span>
-        </a>
-        <a class="clink" href="https://www.google.com/maps/search/?api=1&query=Kasarani+Stadium,Nairobi,Kenya" target="_blank" rel="noopener">
-          <span class="clink-icon">⌖</span>
-          <span><strong>Location</strong><small>Kasarani, Nairobi, Kenya</small></span>
-        </a>
+      <div class="contact-grid">
+
+        <!-- Contact form -->
+        <div class="contact-form reveal">
+          <h3>Send a message</h3>
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First name</label>
+                <input type="text" id="fname" name="fname" placeholder="Your name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="service">Service needed</label>
+              <select id="service" name="service">
+                <option value="">Select a service…</option>
+                <option>Web Development</option>
+                <option>Data Entry</option>
+                <option>Document Formatting</option>
+                <option>Video Editing</option>
+                <option>Social Media Content</option>
+                <option>ICT Support</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message" style="display:flex;justify-content:space-between;">
+                Project details
+                <span id="msgCount" style="font-weight:400;color:var(--muted);">0 / 2000</span>
+              </label>
+              <textarea id="message" name="message" placeholder="Describe your project or requirements…" required maxlength="2000"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message →</button>
+          </form>
+          <div class="form-success" id="formSuccess">
+            ✓ Message sent! I'll get back to you within 24 hours.
+          </div>
+        </div>
+
+        <!-- Contact links -->
+        <div class="reveal reveal-delay-2">
+          <div class="contact-links">
+            <a class="clink" href="https://wa.me/254700171187" target="_blank" rel="noopener">
+              <span class="clink-icon">◉</span>
+              <span><strong>WhatsApp</strong><small>+254 700 171 187</small></span>
+            </a>
+            <a class="clink" href="mailto:collinspharaoh79@gmail.com">
+              <span class="clink-icon">@</span>
+              <span><strong>Email</strong><small>collinspharaoh79@gmail.com</small></span>
+            </a>
+            <a class="clink" href="https://github.com/pharaoh64" target="_blank" rel="noopener">
+              <span class="clink-icon">⌘</span>
+              <span><strong>GitHub</strong><small>github.com/pharaoh64</small></span>
+            </a>
+            <a class="clink" href="https://www.google.com/maps/search/?api=1&query=Kasarani+Stadium,Nairobi,Kenya" target="_blank" rel="noopener">
+              <span class="clink-icon">⌖</span>
+              <span><strong>Location</strong><small>Kasarani, Nairobi, Kenya</small></span>
+            </a>
+          </div>
+          <div style="margin-top:24px; padding:20px; border:1px solid var(--line); border-radius:var(--r); background:var(--card);">
+            <div style="font-size:.75rem; color:var(--green); font-weight:700; letter-spacing:.08em; margin-bottom:8px;">RESPONSE TIME</div>
+            <div style="color:var(--white); font-weight:600;">Within 24 hours</div>
+            <div style="font-size:.82rem; color:var(--muted); margin-top:4px;">Usually much faster on WhatsApp</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -816,38 +1141,39 @@
   <!-- CV -->
   <section id="cv" class="section section-alt">
     <div class="wrap">
-      <div style="margin-bottom:48px;">
+      <div style="margin-bottom:48px;" class="reveal">
         <p class="label">CV</p>
         <h2>Professional profile.</h2>
         <p class="sub">A snapshot of my technical background and capabilities.</p>
       </div>
       <div class="cv-grid">
-        <div class="cv-card">
+        <div class="cv-card reveal">
           <h3>Curriculum Vitae</h3>
           <p>Education, skills, experience and professional information — in full.</p>
           <ul class="cv-list">
             <li>ICT technical background</li>
-            <li>Web development</li>
+            <li>Web development (HTML, CSS, JS)</li>
             <li>Digital content &amp; video editing</li>
             <li>Data entry &amp; document formatting</li>
             <li>GitHub &amp; digital project development</li>
           </ul>
           <div class="cv-btns">
             <a class="btn btn-green" href="Farrel_Lumumba_CV.pdf" target="_blank" rel="noopener">View CV</a>
-            <a class="btn btn-ghost" href="Farrel_Lumumba_CV.pdf" download="Pharaoh_Collins_Farrel_Lumumba_CV.pdf">Download</a>
+            <a class="btn btn-ghost" href="Farrel_Lumumba_CV.pdf" download="Farrel_Lumumba_CV.pdf">Download</a>
           </div>
+
         </div>
-        <div class="cv-card">
+        <div class="cv-card reveal reveal-delay-2">
           <h3>Let's work together.</h3>
           <p>I'm open to freelance projects, collaborations and opportunities where I can apply my technical and creative skills.</p>
           <ul class="cv-list">
-            <li>Nairobi, Kenya</li>
-            <li>Kasarani area</li>
+            <li>Nairobi, Kenya — Kasarani area</li>
             <li>Available for digital projects</li>
             <li>Remote-friendly</li>
+            <li>Short-term &amp; ongoing contracts</li>
             <li>Continuously developing new skills</li>
           </ul>
-          <a class="btn btn-green" href="#hire">Hire Me</a>
+          <a class="btn btn-green" href="#contact">Get in Touch</a>
         </div>
       </div>
     </div>
@@ -862,65 +1188,300 @@
     <div style="display:flex; gap:1.5rem;">
       <a href="https://github.com/pharaoh64" target="_blank" rel="noopener">GitHub</a>
       <a href="mailto:collinspharaoh79@gmail.com">Email</a>
+      <a href="https://wa.me/254700171187" target="_blank" rel="noopener">WhatsApp</a>
       <a href="#home">Top ↑</a>
     </div>
   </div>
 </footer>
 
 <script>
-  /* Mobile nav */
-  const ham = document.getElementById('ham');
-  const nav = document.getElementById('navLinks');
-  ham.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    ham.setAttribute('aria-expanded', open);
-    ham.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    ham.textContent = open ? '✕' : '☰';
-    document.body.classList.toggle('locked', open);
+/* ── PARTICLE CANVAS ── */
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, pts;
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  function init(){
+    resize();
+    pts = Array.from({length:60}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const green = '0,200,150';
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${green},.5)`;
+      ctx.fill();
+    });
+    // connect nearby points
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle = `rgba(${green},${.15*(1-d/120)})`;
+          ctx.lineWidth = .6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+
+/* ── MOBILE NAV ── */
+const ham = document.getElementById('ham');
+const nav = document.getElementById('navLinks');
+ham.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  ham.setAttribute('aria-expanded', open);
+  ham.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  ham.textContent = open ? '✕' : '☰';
+  document.body.classList.toggle('locked', open);
+});
+nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  nav.classList.remove('open');
+  ham.setAttribute('aria-expanded','false');
+  ham.setAttribute('aria-label','Open menu');
+  ham.textContent = '☰';
+  document.body.classList.remove('locked');
+}));
+
+/* ── ACTIVE NAV ── */
+const secs = [...document.querySelectorAll('main section[id]')];
+const links = [...document.querySelectorAll('.nav-links a')];
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting)
+      links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#'+e.target.id));
   });
-  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    nav.classList.remove('open');
-    ham.setAttribute('aria-expanded', 'false');
-    ham.setAttribute('aria-label', 'Open menu');
-    ham.textContent = '☰';
-    document.body.classList.remove('locked');
-  }));
+}, { rootMargin: '-30% 0px -60% 0px' });
+secs.forEach(s => io.observe(s));
 
-  /* Active nav link */
-  const secs = [...document.querySelectorAll('main section[id]')];
-  const links = [...document.querySelectorAll('.nav-links a')];
-  new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting)
-        links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
-    });
-  }, { rootMargin: '-30% 0px -60% 0px' }).observe
-  && secs.forEach(s => new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting)
-        links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
-    });
-  }, { rootMargin: '-30% 0px -60% 0px' }).observe(s));
+/* ── SCROLL REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(r => revealObs.observe(r));
 
-  /* Skill bars */
-  const fills = document.querySelectorAll('.fill');
-  new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.style.width = e.target.dataset.w + '%';
-        observer.unobserve(e.target);
-      }
+/* ── SKILL BARS ── */
+const fills = document.querySelectorAll('.fill');
+const skillObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.style.width = e.target.dataset.w + '%';
+      skillObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+fills.forEach(f => skillObs.observe(f));
+
+/* ── 3D CARD TILT on portfolio cards ── */
+document.querySelectorAll('.work-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - .5;
+    const y = (e.clientY - r.top)  / r.height - .5;
+    card.style.transform = `perspective(600px) rotateY(${x*12}deg) rotateX(${-y*8}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ── HERO 3D PARALLAX on scroll ── */
+const heroVisual = document.getElementById('heroVisual');
+if(heroVisual && window.innerWidth > 900){
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    heroVisual.style.transform = `perspective(800px) rotateY(${-6 + y*0.01}deg) rotateX(${2 + y*0.005}deg) translateY(${-y*.08}px)`;
+  }, { passive:true });
+}
+
+/* ── MESSAGE CHARACTER COUNTER ── */
+document.getElementById('message').addEventListener('input', function(){
+  const count = this.value.length;
+  const counter = document.getElementById('msgCount');
+  counter.textContent = count + ' / 2000';
+  counter.style.color = count > 1800 ? '#e05c5c' : 'var(--muted)';
+});
+
+/* ── CONTACT FORM — HARDENED ── */
+(function(){
+  // Rate limiting: max 3 submissions per 10 minutes (localStorage, best-effort)
+  const RATE_LIMIT = 3;
+  const RATE_WINDOW = 10 * 60 * 1000; // 10 min in ms
+
+  function getSubmissions(){
+    try {
+      const raw = localStorage.getItem('fl_submissions');
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+  function recordSubmission(){
+    try {
+      const now = Date.now();
+      const list = getSubmissions().filter(t => now - t < RATE_WINDOW);
+      list.push(now);
+      localStorage.setItem('fl_submissions', JSON.stringify(list));
+    } catch(e){}
+  }
+  function isRateLimited(){
+    try {
+      const now = Date.now();
+      const recent = getSubmissions().filter(t => now - t < RATE_WINDOW);
+      return recent.length >= RATE_LIMIT;
+    } catch(e){ return false; }
+  }
+
+  // Sanitize: strip HTML tags and dangerous characters
+  function sanitize(str){
+    return str
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;')
+      .replace(/\\/g, '&#x5C;')
+      .trim();
+  }
+
+  // Validate email properly
+  function isValidEmail(email){
+    return /^[^\s@<>'"]{1,64}@[^\s@<>'"]{1,255}\.[a-zA-Z]{2,}$/.test(email);
+  }
+
+  // Show field error
+  function showError(fieldId, msg){
+    const field = document.getElementById(fieldId);
+    field.style.borderColor = '#e05c5c';
+    field.style.boxShadow = '0 0 0 3px rgba(224,92,92,.15)';
+    let err = field.parentNode.querySelector('.field-error');
+    if(!err){
+      err = document.createElement('div');
+      err.className = 'field-error';
+      err.style.cssText = 'font-size:.75rem;color:#e05c5c;margin-top:5px;';
+      field.parentNode.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+
+  // Clear field errors
+  function clearErrors(){
+    document.querySelectorAll('.field-error').forEach(e => e.remove());
+    document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(f => {
+      f.style.borderColor = '';
+      f.style.boxShadow = '';
     });
-  }, { threshold: 0.3 });
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.style.width = e.target.dataset.w + '%';
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  fills.forEach(f => observer.observe(f));
+  }
+
+  // Honeypot: hidden field — bots fill it, humans don't
+  const honeypot = document.createElement('input');
+  honeypot.type = 'text';
+  honeypot.name = 'website';
+  honeypot.autocomplete = 'off';
+  honeypot.style.cssText = 'position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;';
+  honeypot.tabIndex = -1;
+  honeypot.setAttribute('aria-hidden','true');
+  document.getElementById('contactForm').appendChild(honeypot);
+
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    clearErrors();
+
+    // Honeypot check — bots fill this
+    if(honeypot.value){ return; }
+
+    // Rate limit check
+    if(isRateLimited()){
+      showError('fname', 'Too many messages sent. Please wait 10 minutes and try again.');
+      return;
+    }
+
+    // Get raw values
+    const fname   = document.getElementById('fname').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const service = document.getElementById('service').value;
+
+    // Validate — field by field
+    let valid = true;
+
+    if(!fname || fname.length < 2){
+      showError('fname', 'Please enter your name (at least 2 characters).');
+      valid = false;
+    } else if(fname.length > 80){
+      showError('fname', 'Name is too long (max 80 characters).');
+      valid = false;
+    }
+
+    if(!email){
+      showError('email', 'Please enter your email address.');
+      valid = false;
+    } else if(!isValidEmail(email)){
+      showError('email', 'Please enter a valid email address.');
+      valid = false;
+    }
+
+    if(!message || message.length < 10){
+      showError('message', 'Please write a message (at least 10 characters).');
+      valid = false;
+    } else if(message.length > 2000){
+      showError('message', 'Message is too long (max 2,000 characters).');
+      valid = false;
+    }
+
+    if(!valid) return;
+
+    // Sanitize before use
+    const safeName    = sanitize(fname);
+    const safeEmail   = sanitize(email);
+    const safeMessage = sanitize(message);
+    const safeService = sanitize(service);
+
+    // Build mailto
+    const subject = encodeURIComponent('Project enquiry from ' + safeName);
+    const body = encodeURIComponent(
+      'Name: '    + safeName    + '\n' +
+      'Email: '   + safeEmail   + '\n' +
+      (safeService ? 'Service: ' + safeService + '\n' : '') +
+      '\nMessage:\n' + safeMessage
+    );
+
+    // Record submission for rate limiting
+    recordSubmission();
+
+    // Open email client
+    window.open('mailto:collinspharaoh79@gmail.com?subject=' + subject + '&body=' + body);
+
+    // Show success
+    this.style.display = 'none';
+    document.getElementById('formSuccess').classList.add('show');
+  });
+})();
 </script>
 </body>
 </html>

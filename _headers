@@ -1,0 +1,19 @@
+/*
+  # Block clickjacking — stops your site being embedded in iframes on other sites
+  X-Frame-Options: DENY
+
+  # Stop browsers guessing file types (MIME sniffing attacks)
+  X-Content-Type-Options: nosniff
+
+  # Control what info is sent when someone clicks a link off your site
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Restrict what powerful browser features this page can use
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+  # Force HTTPS — tells browsers to only load your site over secure connection
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+  # Content Security Policy — whitelists exactly where resources can load from
+  # Blocks inline script injection (XSS), only allows known safe sources
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.pexels.com data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:;
